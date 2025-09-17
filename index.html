@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri-Optimize</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <link rel="stylesheet" href="index.css">
+    <script type="importmap">
+{
+  "imports": {
+    "chart.js": "https://esm.sh/chart.js@4.4.2",
+    "chart.js/auto": "https://esm.sh/chart.js@4.4.2/auto",
+    "chart.js/": "https://aistudiocdn.com/chart.js@^4.5.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0"
+  }
+}
+</script>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+    <!-- Auth Section -->
+    <section id="auth-section" class="flex items-center justify-center min-h-screen bg-green-900 bg-opacity-75">
+        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-green-700">Agri-Optimize</h1>
+                <p class="text-gray-500">Your AI Farming Assistant</p>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="email" class="text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="email" name="email" value="farmer@demo.com" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500" placeholder="you@example.com">
+                </div>
+                <div>
+                    <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" value="password123" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500" placeholder="••••••••">
+                </div>
+                <div>
+                    <button type="submit" class="w-full px-4 py-2 font-semibold text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300">Login</button>
+                </div>
+                <p class="text-sm text-center text-gray-500">Don't have an account? <a href="#" class="font-medium text-blue-600 hover:underline">Register</a></p>
+            </form>
+        </div>
+    </section>
+
+    <!-- App Section -->
+    <section id="app-section" class="hidden">
+        <div class="flex h-screen bg-gray-100">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white shadow-md hidden md:block">
+                <div class="p-6">
+                    <h1 class="text-3xl font-bold text-green-700">Agri-Optimize</h1>
+                </div>
+                <nav class="mt-6">
+                    <a href="#" data-view="dashboard" class="nav-link active"><span class="mr-2">📊</span> Dashboard</a>
+                    <a href="#" data-view="fields" class="nav-link"><span class="mr-2">🏞️</span> My Fields</a>
+                    <a href="#" data-view="reports" class="nav-link"><span class="mr-2">📄</span> Reports</a>
+                    <a href="#" data-view="community" class="nav-link"><span class="mr-2">👥</span> Community</a>
+                    <a href="#" data-view="profile" class="nav-link"><span class="mr-2">👤</span> Profile</a>
+                </nav>
+            </aside>
+
+            <div class="flex-1 flex flex-col overflow-hidden">
+                <!-- Header -->
+                <header class="flex items-center justify-between p-4 bg-white border-b">
+                    <div>
+                        <h2 id="welcome-message" class="text-xl font-semibold text-gray-800 cursor-pointer hover:text-green-700">Welcome!</h2>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div id="plan-status"></div>
+                        <div class="relative">
+                            <button id="lang-switcher" class="px-3 py-1 text-sm border rounded-md hover:bg-gray-100">العربية</button>
+                        </div>
+                        <button id="logout-button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">Logout</button>
+                    </div>
+                </header>
+
+                <!-- Main Content -->
+                <main id="main-content" class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                    <!-- Dashboard View -->
+                    <div id="dashboard-view"></div>
+                    <!-- Other views will be hidden/shown here -->
+                    <div id="fields-view" class="hidden">Fields Content</div>
+                    <div id="reports-view" class="hidden">Reports Content</div>
+                    <div id="community-view" class="hidden">Community Content</div>
+                    <div id="profile-view" class="hidden">Profile Content</div>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div id="add-field-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-50 p-4">
+        <!-- Modal content will be injected here by JS -->
+    </div>
+    
+    <div id="confirmation-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-50 p-4">
+        <!-- Confirmation modal content will be injected here by JS -->
+    </div>
+
+    <div id="new-post-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-50 p-4">
+        <!-- New post modal content will be injected here by JS -->
+    </div>
+
+    <div id="upgrade-plan-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-50">
+        <!-- Modal content will be injected here -->
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2 rtl:right-auto rtl:left-4">
+        <!-- Toast messages will be injected here -->
+    </div>
+
+
+    <script type="module" src="index.tsx"></script>
+</body>
+</html>

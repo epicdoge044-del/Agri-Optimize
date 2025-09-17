@@ -1,0 +1,5 @@
+{
+  "name": " Agri-Optimize V5",
+  "description": "A web platform for farmers and agricultural engineers to monitor, analyze, and optimize their fields using satellite data, remote sensing, and AI-based recommendations.",
+  "requestFramePermissions": []
+}
